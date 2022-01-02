@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.board">
+
+	
+
+	<!-- 글쓰기 타이틀 바디 아이디값 게시판 이름 -->
+	<insert id="insertBoard"  parameterType="BoardVO">
+		<![CDATA[
+			insert into boardTbl(board_title, board_body,id, board_category)
+			values(#{boardTitle}, #{boardBody}, #{id}, #{boardCategory})
+		]]>      
+	</insert>
+	
+	<insert id="insertBoard_reply"  parameterType="BoardRPVO">
+		<![CDATA[
+			insert into replyTbl(board_no,id,reply_body)
+			values(#{boardNo}, #{id}, #{replyBody})
+		]]>      
+	</insert>
+	
+	<update id="updateBoard"  parameterType="BoardVO">
+		<![CDATA[
+			update boardTbl set board_title = #{boardTitle}, board_body = #{boardBody}
+			where board_seq = #{index}
+		]]>      
+	</update>
+	
+	<update id="updateBoardReply"  parameterType="BoardRPVO">
+		<![CDATA[
+			update replyTbl set reply_body = #{replyBody}
+			where reply_seq = #{boardReplyIndex}
+		]]>      
+	</update>
+	
+	
+	<delete id="deleteBoard"  parameterType="int">
+		<![CDATA[
+			delete from boardTbl where board_seq = #{index}
+		]]>      
+	</delete>
+	
+	<delete id="deleteBoardReply"  parameterType="int">
+		<![CDATA[
+			delete from replyTbl where reply_seq = #{boardReplyIndex}
+		]]>      
+	</delete>
+	
+
+	
+	<resultMap id="readBoardResult" type="BoardVO">
+		<result property="index" column="board_seq" />
+		<result property="boardTitle" column="board_title" />
+		<result property="boardBody" column="board_body" />
+		<result property="id" column="id" />
+		<result property="viewCount" column="view_count" />
+		<result property="boardRecommend" column="board_recommend" />
+		<result property="boardNotRecommend" column="board_not_recommend" />
+		<result property="boardCategory" column="board_category" />
+		<result property="timestamp" column="write_time" />
+	</resultMap>
+	
+	<resultMap id="readReplyResult" type="BoardRPVO">
+		<result property="boardReplyIndex" column="reply_seq" />
+		<result property="boardIndex" column="board_no" />
+		<result property="replyBody" column="reply_body" />
+		<result property="id" column="id" />
+		<result property="replyRecommend" column="reply_recommend" />
+		<result property="replyNotRecommend" column="reply_not_recommend" />
+		<result property="timestamp" column="write_time" />
+	</resultMap>
+	
+	<select id="selectBoardCategory"  parameterType="String"  resultMap="readBoardResult">
+		<![CDATA[
+			select * from boardTbl where board_category = #{boardCategory} 
+		]]>      
+	</select>
+	
+		<select id="selectDetailBoard"  parameterType="String"  resultMap="readBoardResult">
+		<![CDATA[
+			select * from boardTbl where board_seq = #{index} 
+		]]>      
+	</select>
+	
+	
+	<select id="selectBoardReply"  parameterType="String" resultMap="readReplyResult">
+		<![CDATA[
+			select * from boardReplyTbl where find_board = #{boardIndex} 
+		]]>      
+	</select>
+
+	
+	<update id="countView"  parameterType="int">
+	<![CDATA[
+		update boardTbl set view_count = view_count+1
+		where board_seq = #{index}
+	]]>    
+	</update>
+	
+	
+</mapper>
